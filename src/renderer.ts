@@ -26,6 +26,7 @@
  * ```
  */
 
+import './index.css';
 import * as Mousetrap from 'mousetrap';
 
 (function resizeCanvas() {
