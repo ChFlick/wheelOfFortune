@@ -1,25 +1,86 @@
 {
   "name": "wheeloffortune",
-  "version": "0.1.0",
-  "description": "Dynamic wheel of fortune app",
-  "main": "src/main.js",
+  "productName": "wheeloffortune",
+  "version": "1.0.0",
+  "description": "My Electron application description",
+  "main": ".webpack/main",
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npm run build && electron ./dist/main.js"
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "echo \"No linting configured\""
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ChFlick/wheelOfFortune.git"
+  "keywords": [],
+  "author": {
+    "name": "Christoph Flick",
+    "email": "christophflick@gmx.de"
   },
-  "author": "https://github.com/ChFlick",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/ChFlick/wheelOfFortune/issues"
+  "config": {
+    "forge": {
+      "packagerConfig": {},
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "wheeloffortune"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {}
+        }
+      ],
+      "plugins": [
+        [
+          "@electron-forge/plugin-webpack",
+          {
+            "mainConfig": "./webpack.main.config.js",
+            "renderer": {
+              "config": "./webpack.renderer.config.js",
+              "entryPoints": [
+                {
+                  "html": "./src/index.html",
+                  "js": "./src/renderer.ts",
+                  "name": "main_window"
+                }
+              ]
+            }
+          }
+        ]
+      ]
+    }
   },
-  "homepage": "https://github.com/ChFlick/wheelOfFortune#readme",
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.0",
+    "mousetrap": "^1.6.3"
+  },
   "devDependencies": {
-    "electron": "^7.0.0"
+    "@electron-forge/cli": "6.0.0-beta.45",
+    "@electron-forge/maker-deb": "6.0.0-beta.45",
+    "@electron-forge/maker-rpm": "6.0.0-beta.45",
+    "@electron-forge/maker-squirrel": "6.0.0-beta.45",
+    "@electron-forge/maker-zip": "6.0.0-beta.45",
+    "@electron-forge/plugin-webpack": "6.0.0-beta.45",
+    "@marshallofsound/webpack-asset-relocator-loader": "^0.5.0",
+    "@types/mousetrap": "^1.6.3",
+    "css-loader": "^3.0.0",
+    "electron": "7.0.0",
+    "fork-ts-checker-webpack-plugin": "^2.0.0",
+    "node-loader": "^0.6.0",
+    "style-loader": "^0.23.1",
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.6.4"
   }
 }
