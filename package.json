@@ -1,0 +1,25 @@
+{
+  "name": "wheeloffortune",
+  "version": "0.1.0",
+  "description": "Dynamic wheel of fortune app",
+  "main": "src/main.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npm run build && electron ./dist/main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChFlick/wheelOfFortune.git"
+  },
+  "author": "https://github.com/ChFlick",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ChFlick/wheelOfFortune/issues"
+  },
+  "homepage": "https://github.com/ChFlick/wheelOfFortune#readme",
+  "devDependencies": {
+    "electron": "^7.0.0"
+  }
+}
