@@ -28,6 +28,8 @@
 
 import './index.css';
 import * as Mousetrap from 'mousetrap';
+import fs from 'fs';
+import path from 'path';
 
 (function resizeCanvas() {
     const canvas = <HTMLCanvasElement>document.getElementById('canvas');
@@ -40,6 +42,18 @@ import * as Mousetrap from 'mousetrap';
 function rand(min: number, max: number) {
     return Math.random() * (max - min) + min;
 }
+
+const file = fs.readFileSync(path.resolve('./data.csv'));
+const csv = file.toString();
+
+const cols = csv.split('\n')[0].split(',');
+const valuesByCol: { [colName: string]: string[] } = {};
+cols.forEach((col, i) => {
+    valuesByCol[col] = csv.split('\n').slice(1).map(row => row.split(',')[i]);
+});
+
+console.log(valuesByCol);
+
 
 var color = ['#fbc', '#f88', '#fbc', '#f88', '#fbc', '#f88', "#fbc", "#f67"];
 var label = ['A', 'B', 'C', 'D', 'E', 'F', 'G', "H"];
