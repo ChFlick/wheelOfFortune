@@ -30,6 +30,9 @@ import './index.css';
 import * as Mousetrap from 'mousetrap';
 import fs from 'fs';
 import path from 'path';
+import { Howl, Howler } from 'howler';
+
+const DEBUG = false;
 
 (function resizeCanvas() {
     const canvas = <HTMLCanvasElement>document.getElementById('canvas');
@@ -38,6 +41,10 @@ import path from 'path';
         canvas.height = window.innerHeight - 100;
     }
 })()
+
+let tickingSound = new Howl({
+    src: [require('../resources/tick.mp3')],
+});
 
 function rand(min: number, max: number) {
     return Math.random() * (max - min) + min;
@@ -60,6 +67,7 @@ const colors = ['#006FB2', '#B9E0F3', '#008655', '#FFB836', '#E83238'];
 const slices = rows.length - 1;
 const sliceDeg = 360 / slices;
 let deg = rand(0, 360);
+let lastTickedSlice = 0;
 let speed = 0;
 let slowDownRand = 0;
 const canvas = <HTMLCanvasElement>document.getElementById('canvas');
@@ -108,6 +116,22 @@ function drawImg() {
         drawText(deg + sliceDeg / 2, values[i]);
         deg += sliceDeg;
     }
+    deg %= 360;
+}
+
+function sliceAtDeg(deg: number, slices: number) {
+    let ai = Math.floor(((360 - deg - 90) % 360) / sliceDeg); // deg 2 Array Index
+    ai = (slices + ai) % slices; // Fix negative index
+    return ai;
+}
+
+function tickSound(deg: number, slices: number) {
+    const currentSlice = sliceAtDeg(deg, slices);
+
+    if (currentSlice !== lastTickedSlice) {
+        tickingSound.play();
+        lastTickedSlice = currentSlice;
+    }
 }
 
 function anim() {
@@ -119,28 +143,33 @@ function anim() {
     if (isStopped) {
         if (!lock) {
             lock = true;
-            if (speed < 1) {
-                slowDownRand = rand(0.996, 0.998);
+            if (speed < 1 && speed > 0.2) {
+                slowDownRand = rand(0.997, 0.999);
+            } else if (speed < 0.2) {
+                slowDownRand = rand(0.998, 0.999);
             }
         }
-        speed = speed > 0.2 ? speed *= slowDownRand : 0;
+
+        console.log(speed);
+
+        speed = speed > 0.15 ? speed *= slowDownRand : 0;
     }
     // Stopped!
     if (lock && !speed) {
-        let ai = Math.floor(((360 - deg - 90) % 360) / sliceDeg); // deg 2 Array Index
-        ai = (slices + ai) % slices; // Fix negative index
-        return alert("You got:\n" + values[ai]); // Get Array Item from end Degree
+        const currentSlice = sliceAtDeg(deg, slices);
+        return alert("You got:\n" + values[currentSlice]); // Get Array Item from end Degree
     }
 
     drawImg();
+    tickSound(deg, slices);
     window.requestAnimationFrame(anim);
 };
 
 const wheel = document.getElementById("wheel");
 const startTurning = () => {
-    speed = 30;
+    speed = 15;
     isStopped = true;
-    slowDownRand = rand(0.992, 0.995);
+    slowDownRand = rand(0.994, 0.995);
     anim();
 }
 

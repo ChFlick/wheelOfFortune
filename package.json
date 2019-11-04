@@ -63,7 +63,9 @@
     }
   },
   "dependencies": {
+    "@types/howler": "^2.1.1",
     "electron-squirrel-startup": "^1.0.0",
+    "howler": "^2.1.2",
     "mousetrap": "^1.6.3"
   },
   "devDependencies": {
