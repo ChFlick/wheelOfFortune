@@ -51,147 +51,169 @@ const winnerElement = <HTMLDivElement>document.getElementById('winner');
 const winnerText = <HTMLParagraphElement>document.getElementById('winner-text');
 
 function win(name: string) {
+    console.log(data);
+    data = data.filter(d => d[categories[currentCategory]] === name);
+    console.log(data);
     winnerText.innerText = name;
     winnerElement.className = '';
+
+    const onClick = () => {
+        if (currentCategory - 1 !== categories.length) {
+            currentCategory++;
+            winnerElement.className = 'invisible';
+            startWheel();
+        }
+        winnerElement.removeEventListener('click', onClick);
+    };
+    winnerElement.addEventListener('click', onClick);
 }
 
 function rand(min: number, max: number) {
     return Math.random() * (max - min) + min;
 }
 
-const file = fs.readFileSync(path.resolve('./data.csv'));
-const csv = file.toString();
+const categories = ['bundesland', 'stadt', 'name'];
+const categoryDisplayNames = ['Bundesland', 'Stadt/Kreis/Landkreis', 'Person'];
+let currentCategory = 0;
 
+const csv = fs.readFileSync(path.resolve('./data.csv')).toString();;
 const rows = csv.split('\n');
 const colNames = rows[0].split(',');
-const valuesByCol: { [colName: string]: string[] } = {};
-colNames.forEach((col, i) => {
-    valuesByCol[col] = csv.split('\n').slice(1).map(row => row.split(',')[i]);
+
+let data = rows.slice(1).map(row => {
+    const entry: { [colName: string]: string } = {};
+    colNames.forEach((col, i) => {
+        entry[col] = row.split(',')[i];
+    });
+    return entry;
 });
 
-const values = valuesByCol[colNames[0]];
-const colors = ['#006FB2', '#B9E0F3', '#008655', '#FFB836', '#E83238'];
-const slices = rows.length - 1;
-const sliceDeg = 360 / slices;
-let deg = rand(0, 360);
-let lastTickedSlice = 0;
-let speed = 0;
-let slowDownRand = 0;
-const canvas = <HTMLCanvasElement>document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const width = canvas.width; // size
-const center = width / 2;      // center
-let isStopped = false;
+startWheel();
 
-function deg2rad(deg: number) {
-    return deg * Math.PI / 180;
-}
+function startWheel() {
+    const values = [...new Set(data.map(d => d[categories[currentCategory]]))];
+    const colors = ['#006FB2', '#B9E0F3', '#008655', '#FFB836', '#E83238'];
+    const slices = values.length;
+    const sliceDeg = 360 / slices;
+    let deg = rand(0, 360);
+    let lastTickedSlice = 0;
+    let speed = 0;
+    let slowDownRand = 0;
+    const canvas = <HTMLCanvasElement>document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width; // size
+    const center = width / 2;      // center
+    let isStopped = false;
 
-function drawSlice(deg: number, color: string) {
-    if (!ctx) {
-        return;
+    function deg2rad(deg: number) {
+        return deg * Math.PI / 180;
     }
-    ctx.beginPath();
-    ctx.fillStyle = color;
-    ctx.moveTo(center, center);
-    ctx.arc(center, center, width / 2, deg2rad(deg), deg2rad(deg + sliceDeg));
-    ctx.lineTo(center, center);
-    ctx.fill();
-}
 
-function drawText(deg: number, text: string) {
-    if (!ctx) {
-        return;
+    function drawSlice(deg: number, color: string) {
+        if (!ctx) {
+            return;
+        }
+        ctx.beginPath();
+        ctx.fillStyle = color;
+        ctx.moveTo(center, center);
+        ctx.arc(center, center, width / 2, deg2rad(deg), deg2rad(deg + sliceDeg));
+        ctx.lineTo(center, center);
+        ctx.fill();
     }
-    ctx.save();
-    ctx.translate(center, center);
-    ctx.rotate(deg2rad(deg));
-    ctx.textAlign = "left";
-    ctx.fillStyle = "#fff";
-    ctx.font = 'bold 30px sans-serif';
-    ctx.fillText(text, 130, 10);
-    ctx.restore();
-}
 
-function drawImg() {
-    if (!ctx) {
-        return;
+    function drawText(deg: number, text: string) {
+        if (!ctx) {
+            return;
+        }
+        ctx.save();
+        ctx.translate(center, center);
+        ctx.rotate(deg2rad(deg));
+        ctx.textAlign = "left";
+        ctx.fillStyle = "#fff";
+        ctx.font = 'bold 30px sans-serif';
+        ctx.fillText(text, 130, 10);
+        ctx.restore();
     }
-    ctx.clearRect(0, 0, width, width);
-    for (let i = 0; i < slices; i++) {
-        drawSlice(deg, colors[i % colors.length]);
-        drawText(deg + sliceDeg / 2, values[i]);
-        deg += sliceDeg;
+
+    function drawImg() {
+        if (!ctx) {
+            return;
+        }
+        ctx.clearRect(0, 0, width, width);
+        for (let i = 0; i < slices; i++) {
+            drawSlice(deg, colors[i % colors.length]);
+            drawText(deg + sliceDeg / 2, values[i]);
+            deg += sliceDeg;
+        }
+        deg %= 360;
     }
-    deg %= 360;
-}
 
-function sliceAtDeg(deg: number, slices: number) {
-    let ai = Math.floor(((360 - deg - 90) % 360) / sliceDeg); // deg 2 Array Index
-    ai = (slices + ai) % slices; // Fix negative index
-    return ai;
-}
-
-function tickSound(deg: number, slices: number) {
-    const currentSlice = sliceAtDeg(deg, slices);
-
-    if (currentSlice !== lastTickedSlice) {
-        tickingSound.play();
-        lastTickedSlice = currentSlice;
+    function sliceAtDeg(deg: number, slices: number) {
+        let ai = Math.floor(((360 - deg - 90) % 360) / sliceDeg); // deg 2 Array Index
+        ai = (slices + ai) % slices; // Fix negative index
+        return ai;
     }
-}
 
-function anim() {
-    deg += speed;
-    deg %= 360;
+    function tickSound(deg: number, slices: number) {
+        const currentSlice = sliceAtDeg(deg, slices);
 
-    // Decrement Speed
-    let lock = false;
-    if (isStopped) {
-        if (!lock) {
-            lock = true;
-            if (speed < 1 && speed > 0.2) {
-                slowDownRand = rand(0.997, 0.998);
+        if (currentSlice !== lastTickedSlice) {
+            tickingSound.play();
+            lastTickedSlice = currentSlice;
+        }
+    }
+
+    function anim() {
+        deg += speed;
+        deg %= 360;
+
+        // Decrement Speed
+        let lock = false;
+        if (isStopped) {
+            if (!lock) {
+                lock = true;
+                if (speed < 1 && speed > 0.2) {
+                    slowDownRand = rand(0.997, 0.998);
+                }
             }
+
+            speed = speed > 0.15 ? speed *= slowDownRand : 0;
+        }
+        // Stopped!
+        if (lock && !speed) {
+            const currentSlice = sliceAtDeg(deg, slices);
+            tadaSound.play();
+            win(values[currentSlice]);
+            return;
         }
 
-        console.log(speed);
+        drawImg();
+        tickSound(deg, slices);
+        window.requestAnimationFrame(anim);
+    };
 
-        speed = speed > 0.15 ? speed *= slowDownRand : 0;
+    const wheel = document.getElementById("wheel");
+    const startTurning = () => {
+        speed = 7;
+        isStopped = true;
+        slowDownRand = rand(0.994, 0.995);
+        anim();
     }
-    // Stopped!
-    if (lock && !speed) {
-        const currentSlice = sliceAtDeg(deg, slices);
-        tadaSound.play();
-        win(values[currentSlice]);
-        return;
+
+    if (wheel) {
+        wheel.addEventListener("mousedown", function () {
+            if (!isStopped) {
+                startTurning();
+            }
+        }, false);
     }
 
-    drawImg();
-    tickSound(deg, slices);
-    window.requestAnimationFrame(anim);
-};
-
-const wheel = document.getElementById("wheel");
-const startTurning = () => {
-    speed = 7;
-    isStopped = true;
-    slowDownRand = rand(0.994, 0.995);
-    anim();
-}
-
-if (wheel) {
-    wheel.addEventListener("mousedown", function () {
+    Mousetrap.bind('space', () => {
         if (!isStopped) {
             startTurning();
         }
-    }, false);
-}
+    });
 
-Mousetrap.bind('space', () => {
-    if (!isStopped) {
-        startTurning();
-    }
-});
+    drawImg();
 
-drawImg();
+};

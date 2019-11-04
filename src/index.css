@@ -47,3 +47,25 @@ body {
   font-weight: 700;
   padding: 50px;
 }
+
+#category {
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100vw;
+}
+
+#category > p {
+  background-color: #0070AE;
+  border-radius: 25px;
+  color: white;
+  font-family: sans-serif;
+  font-size: 3vw;
+  font-weight: 700;
+  padding: 50px;
+}
