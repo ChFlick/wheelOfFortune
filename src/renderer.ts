@@ -77,13 +77,13 @@ const categoryDisplayNames = ['Bundesland', 'Stadt/Kreis/Landkreis', 'Person'];
 let currentCategory = 0;
 
 const csv = fs.readFileSync(path.resolve('./data.csv')).toString();;
-const rows = csv.split('\n');
-const colNames = rows[0].split(',');
+const rows = csv.split('\n').filter(r => r.trim() !== '');
+const colNames = rows[0].split(/,|;/);
 
 let data = rows.slice(1).map(row => {
     const entry: { [colName: string]: string } = {};
     colNames.forEach((col, i) => {
-        entry[col] = row.split(',')[i];
+        entry[col] = row.split(/,|;/)[i];
     });
     return entry;
 });
