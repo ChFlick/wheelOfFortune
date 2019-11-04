@@ -137,20 +137,25 @@ function anim() {
 };
 
 const wheel = document.getElementById("wheel");
-if (wheel) {
-    wheel.addEventListener("mousedown", function () {
-        speed = 30;
-        isStopped = true;
-        slowDownRand = rand(0.992, 0.995);
-        anim();
-    }, false);
-}
-
-Mousetrap.bind('space', () => {
+const startTurning = () => {
     speed = 30;
     isStopped = true;
     slowDownRand = rand(0.992, 0.995);
     anim();
+}
+
+if (wheel) {
+    wheel.addEventListener("mousedown", function () {
+        if (!isStopped) {
+            startTurning();
+        }
+    }, false);
+}
+
+Mousetrap.bind('space', () => {
+    if (!isStopped) {
+        startTurning();
+    }
 });
 
 drawImg();
