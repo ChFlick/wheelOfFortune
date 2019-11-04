@@ -30,9 +30,7 @@ import './index.css';
 import * as Mousetrap from 'mousetrap';
 import fs from 'fs';
 import path from 'path';
-import { Howl, Howler } from 'howler';
-
-const DEBUG = false;
+import { Howl } from 'howler';
 
 (function resizeCanvas() {
     const canvas = <HTMLCanvasElement>document.getElementById('canvas');
@@ -42,9 +40,12 @@ const DEBUG = false;
     }
 })()
 
-let tickingSound = new Howl({
+const tickingSound = new Howl({
     src: [require('../resources/tick.mp3')],
 });
+const tadaSound = new Howl({
+    src: [require('../resources/tada.wav')],
+})
 
 function rand(min: number, max: number) {
     return Math.random() * (max - min) + min;
@@ -157,6 +158,7 @@ function anim() {
     // Stopped!
     if (lock && !speed) {
         const currentSlice = sliceAtDeg(deg, slices);
+        tadaSound.play();
         return alert("You got:\n" + values[currentSlice]); // Get Array Item from end Degree
     }
 

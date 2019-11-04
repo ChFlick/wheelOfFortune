@@ -8,7 +8,7 @@
 }
 
 body {
-  background-image: url('/resources/curtain.png');
+  background-image: url('../resources/curtain.png');
 }
 
 .arrow-down {

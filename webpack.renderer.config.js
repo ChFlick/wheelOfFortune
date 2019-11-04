@@ -5,7 +5,7 @@ rules.push({
   test: /\.css$/,
   use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
 }, {
-  test: /\.(png|mp3)$/,
+  test: /\.(png|mp3|wav)$/,
   use: [{
     loader: 'file-loader',
     options: {
