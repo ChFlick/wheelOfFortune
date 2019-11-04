@@ -45,7 +45,15 @@ const tickingSound = new Howl({
 });
 const tadaSound = new Howl({
     src: [require('../resources/tada.wav')],
-})
+});
+
+const winnerElement = <HTMLDivElement>document.getElementById('winner');
+const winnerText = <HTMLParagraphElement>document.getElementById('winner-text');
+
+function win(name: string) {
+    winnerText.innerText = name;
+    winnerElement.className = '';
+}
 
 function rand(min: number, max: number) {
     return Math.random() * (max - min) + min;
@@ -60,8 +68,6 @@ const valuesByCol: { [colName: string]: string[] } = {};
 colNames.forEach((col, i) => {
     valuesByCol[col] = csv.split('\n').slice(1).map(row => row.split(',')[i]);
 });
-
-console.log(valuesByCol);
 
 const values = valuesByCol[colNames[0]];
 const colors = ['#006FB2', '#B9E0F3', '#008655', '#FFB836', '#E83238'];
@@ -145,9 +151,7 @@ function anim() {
         if (!lock) {
             lock = true;
             if (speed < 1 && speed > 0.2) {
-                slowDownRand = rand(0.997, 0.999);
-            } else if (speed < 0.2) {
-                slowDownRand = rand(0.998, 0.999);
+                slowDownRand = rand(0.997, 0.998);
             }
         }
 
@@ -159,7 +163,8 @@ function anim() {
     if (lock && !speed) {
         const currentSlice = sliceAtDeg(deg, slices);
         tadaSound.play();
-        return alert("You got:\n" + values[currentSlice]); // Get Array Item from end Degree
+        win(values[currentSlice]);
+        return;
     }
 
     drawImg();
@@ -169,7 +174,7 @@ function anim() {
 
 const wheel = document.getElementById("wheel");
 const startTurning = () => {
-    speed = 15;
+    speed = 7;
     isStopped = true;
     slowDownRand = rand(0.994, 0.995);
     anim();

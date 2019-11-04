@@ -21,3 +21,29 @@ body {
   margin-bottom: -30px;
   width: 0;
 }
+
+.invisible {
+  visibility: hidden;
+}
+
+#winner {
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100vw;
+}
+
+#winner > p {
+  background-color: #E83238;
+  border-radius: 25px;
+  color: white;
+  font-family: sans-serif;
+  font-size: 3vw;
+  font-weight: 700;
+  padding: 50px;
+}
