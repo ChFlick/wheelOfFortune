@@ -46,18 +46,18 @@ function rand(min: number, max: number) {
 const file = fs.readFileSync(path.resolve('./data.csv'));
 const csv = file.toString();
 
-const cols = csv.split('\n')[0].split(',');
+const rows = csv.split('\n');
+const colNames = rows[0].split(',');
 const valuesByCol: { [colName: string]: string[] } = {};
-cols.forEach((col, i) => {
+colNames.forEach((col, i) => {
     valuesByCol[col] = csv.split('\n').slice(1).map(row => row.split(',')[i]);
 });
 
 console.log(valuesByCol);
 
-
-var color = ['#fbc', '#f88', '#fbc', '#f88', '#fbc', '#f88', "#fbc", "#f67"];
-var label = ['A', 'B', 'C', 'D', 'E', 'F', 'G', "H"];
-const slices = color.length;
+const values = valuesByCol[colNames[0]];
+const colors = ['#006FB2', '#B9E0F3', '#008655', '#FFB836', '#E83238'];
+const slices = rows.length - 1;
 const sliceDeg = 360 / slices;
 let deg = rand(0, 360);
 let speed = 0;
@@ -91,7 +91,7 @@ function drawText(deg: number, text: string) {
     ctx.save();
     ctx.translate(center, center);
     ctx.rotate(deg2rad(deg));
-    ctx.textAlign = "right";
+    ctx.textAlign = "left";
     ctx.fillStyle = "#fff";
     ctx.font = 'bold 30px sans-serif';
     ctx.fillText(text, 130, 10);
@@ -104,8 +104,8 @@ function drawImg() {
     }
     ctx.clearRect(0, 0, width, width);
     for (let i = 0; i < slices; i++) {
-        drawSlice(deg, color[i]);
-        drawText(deg + sliceDeg / 2, label[i]);
+        drawSlice(deg, colors[i % colors.length]);
+        drawText(deg + sliceDeg / 2, values[i]);
         deg += sliceDeg;
     }
 }
@@ -129,7 +129,7 @@ function anim() {
     if (lock && !speed) {
         let ai = Math.floor(((360 - deg - 90) % 360) / sliceDeg); // deg 2 Array Index
         ai = (slices + ai) % slices; // Fix negative index
-        return alert("You got:\n" + label[ai]); // Get Array Item from end Degree
+        return alert("You got:\n" + values[ai]); // Get Array Item from end Degree
     }
 
     drawImg();

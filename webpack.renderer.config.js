@@ -4,6 +4,14 @@ const plugins = require('./webpack.plugins');
 rules.push({
   test: /\.css$/,
   use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
+}, {
+  test: /\.png$/,
+  use: [{
+    loader: 'file-loader',
+    options: {
+      name: '[path][name].[ext]',
+    }
+  }],
 });
 
 module.exports = {

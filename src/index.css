@@ -6,3 +6,7 @@
   display: block;
   margin: auto;
 }
+
+body {
+  background-image: url('../resources/curtain.png');
+}
