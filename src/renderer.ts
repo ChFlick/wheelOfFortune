@@ -51,7 +51,6 @@ const winnerElement = <HTMLDivElement>document.getElementById('winner');
 const winnerText = <HTMLParagraphElement>document.getElementById('winner-text');
 
 function win(name: string) {
-    console.log(data);
     data = data.filter(d => d[categories[currentCategory]] === name);
     console.log(data);
     winnerText.innerText = name;
@@ -78,12 +77,12 @@ let currentCategory = 0;
 
 const csv = fs.readFileSync(path.resolve('./data.csv')).toString();;
 const rows = csv.split('\n').filter(r => r.trim() !== '');
-const colNames = rows[0].split(/,|;/);
+const colNames = rows[0].split(/,|;/).map(s => s.trim());
 
 let data = rows.slice(1).map(row => {
     const entry: { [colName: string]: string } = {};
     colNames.forEach((col, i) => {
-        entry[col] = row.split(/,|;/)[i];
+        entry[col] = row.split(/,|;/)[i].trim();
     });
     return entry;
 });
