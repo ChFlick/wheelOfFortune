@@ -71,7 +71,7 @@ function showCategory() {
     const categoryElement = <HTMLDivElement>document.getElementById('category');
     const categoryText = <HTMLParagraphElement>document.getElementById('category-text');
 
-    categoryText.innerText = categoryDisplayNames[currentCategory];
+    categoryText.innerText = categories[currentCategory];
     categoryElement.className = '';
 
     const onClick = () => {
@@ -86,17 +86,15 @@ function rand(min: number, max: number) {
     return Math.random() * (max - min) + min;
 }
 
-const categories = ['bundesland', 'typ', 'name'];
-const categoryDisplayNames = ['Bundesland', 'Stadt, Kreis oder Landkreis?', 'Person'];
 let currentCategory = 0;
 
-const csv = fs.readFileSync(path.resolve('./data.csv')).toString();;
+const csv = fs.readFileSync(path.resolve('./data.csv'), { encoding: 'utf8' }).toString();
 const rows = csv.split('\n').filter(r => r.trim() !== '');
-const colNames = rows[0].split(/,|;/).map(s => s.trim());
+const categories = rows[0].split(/,|;/).map(s => s.trim());
 
 let data = rows.slice(1).map(row => {
     const entry: { [colName: string]: string } = {};
-    colNames.forEach((col, i) => {
+    categories.forEach((col, i) => {
         entry[col] = row.split(/,|;/)[i].trim();
     });
     return entry;
@@ -146,7 +144,7 @@ function startWheel() {
         ctx.rotate(deg2rad(deg));
         ctx.textAlign = "left";
         ctx.fillStyle = "#fff";
-        ctx.font = 'bold 30px sans-serif';
+        ctx.font = 'bold 24px sans-serif';
         ctx.fillText(text, 130, 10);
         ctx.restore();
     }
