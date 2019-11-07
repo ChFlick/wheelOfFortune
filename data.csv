@@ -1,11 +1,11 @@
-name;stadt;bundesland
-Ute Uterus;Kreis A;NRW
-Ursel Ugg;Kreis A;NRW
-Agathe Arnsmann;Kreis B;NRW
-Max Mustermann;Kreis B;NRW
-Klaus Klausen;Kreis C;Baden-Wüttemberg
-Max Moritz;Kreis C;Baden-Wüttemberg
-Nora Noname;Kreis D;Baden-Wüttemberg
-Nuggi Numbaba;Kreis D;Baden-Wüttemberg
+name;typ;bundesland
+Ute Meier;Kreis;NRW
+Ursel Ugg;Stadt;NRW
+Agathe Arnsmann;Kreis;NRW
+Max Mustermann;Landkreis;NRW
+Klaus Klausen;Kreis;Baden-Wüttemberg
+Max Moritz;Stadt;Baden-Wüttemberg
+Nora Noname;Landkreis;Baden-Wüttemberg
+Nuggi Numbaba;Stadt;Baden-Wüttemberg
 
 

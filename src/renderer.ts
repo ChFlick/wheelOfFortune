@@ -52,12 +52,11 @@ const winnerText = <HTMLParagraphElement>document.getElementById('winner-text');
 
 function win(name: string) {
     data = data.filter(d => d[categories[currentCategory]] === name);
-    console.log(data);
     winnerText.innerText = name;
     winnerElement.className = '';
 
     const onClick = () => {
-        if (currentCategory - 1 !== categories.length) {
+        if (currentCategory < categories.length - 1) {
             currentCategory++;
             winnerElement.className = 'invisible';
             startWheel();
@@ -67,12 +66,28 @@ function win(name: string) {
     winnerElement.addEventListener('click', onClick);
 }
 
+
+function showCategory() {
+    const categoryElement = <HTMLDivElement>document.getElementById('category');
+    const categoryText = <HTMLParagraphElement>document.getElementById('category-text');
+
+    categoryText.innerText = categoryDisplayNames[currentCategory];
+    categoryElement.className = '';
+
+    const onClick = () => {
+        categoryElement.className = 'invisible';
+        categoryElement.removeEventListener('click', onClick);
+    };
+    categoryElement.addEventListener('click', onClick);
+}
+
+
 function rand(min: number, max: number) {
     return Math.random() * (max - min) + min;
 }
 
-const categories = ['bundesland', 'stadt', 'name'];
-const categoryDisplayNames = ['Bundesland', 'Stadt/Kreis/Landkreis', 'Person'];
+const categories = ['bundesland', 'typ', 'name'];
+const categoryDisplayNames = ['Bundesland', 'Stadt, Kreis oder Landkreis?', 'Person'];
 let currentCategory = 0;
 
 const csv = fs.readFileSync(path.resolve('./data.csv')).toString();;
@@ -90,6 +105,8 @@ let data = rows.slice(1).map(row => {
 startWheel();
 
 function startWheel() {
+    showCategory();
+
     const values = [...new Set(data.map(d => d[categories[currentCategory]]))];
     const colors = ['#006FB2', '#B9E0F3', '#008655', '#FFB836', '#E83238'];
     const slices = values.length;
